@@ -138,3 +138,13 @@ function wrapText(text, width) {
         }
     });
 }
+// =========================
+// Add Citation
+// =========================
+svg.append("text")
+    .attr("x", 0) // Align to the left
+    .attr("y", height + margin.bottom - 5) // Position just below the x-axis
+    .attr("text-anchor", "start") // Align text to the start
+    .style("font-size", "10px") // Smaller font size for citation
+    .style("fill", "#555") // Subtle gray color
+    .text("Source: City of Boston 311 Data (2023)");

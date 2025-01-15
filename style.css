@@ -1,64 +1,69 @@
-/* General Body Styling */
+/* General Styling */
 body {
-    font-family: Arial, sans-serif; /* Set font for the entire document */
-    margin: 20px; /* Add margin around the body */
-    background-color: #f4f4f4; /* Light gray background for contrast */
+    font-family: 'Arial', sans-serif; /* Clean font for the document */
+    margin: 20px;
+    background-color: #f7f9fc; /* Soft background for contrast */
 }
 
 /* Header Styling */
 h1 {
-    text-align: center; /* Center-align the main title */
-    margin-bottom: 10px; /* Add space below the main title */
-    font-size: 24px; /* Make the headline larger */
-    color: #333; /* Darker color for readability */
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 26px; /* Slightly larger headline */
+    color: #2c3e50; /* Dark blue for readability */
 }
 
 h2 {
-    text-align: center; /* Center-align the subheadline */
-    margin-top: 0; /* Remove additional margin above the subheadline */
-    margin-bottom: 20px; /* Add spacing below the subheadline */
-    font-size: 16px; /* Subheadline size */
-    color: #555; /* Lighter gray for subheadline */
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 18px; /* Subheadline size */
+    color: #34495e; /* Lighter shade of blue-gray */
 }
 
-/* Chart Container Styling */
+/* Chart Container */
 #chart {
-    display: block; /* Make the chart block-level to center it */
-    margin: 0 auto; /* Center the chart horizontally */
-    background-color: white; /* Set a white background for the chart */
-    border: 1px solid #ccc; /* Add a border around the chart */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for better presentation */
+    display: block;
+    margin: 0 auto;
+    background-color: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    padding: 20px;
 }
 
 /* Bar Styling */
 .bar {
-    fill: steelblue; /* Default color for bars */
-    transition: fill 0.3s ease; /* Smooth transition for hover effect */
+    fill: #1abc9c; /* Vibrant teal for bars */
+    transition: fill 0.3s ease, transform 0.2s ease; /* Smooth hover effect */
 }
 
 .bar:hover {
-    fill: orange; /* Highlight color on hover */
+    fill: #16a085; /* Darker teal on hover */
+    transform: scaleX(1.05); /* Slight horizontal zoom */
 }
 
 /* Axis Label Styling */
-.axis-label {
-    font-size: 1px; /* Font size for axis labels */
-    fill: #333; /* Text color for axis labels */
-    text-indent: 30px ;
+.axis-label-y text {
+    font-size: 12px;
+    fill: #2c3e50; /* Dark blue-gray */
 }
 
-/* General Text Styling */
-text {
-    font-family: Arial, sans-serif; /* Use Arial for all text elements */
+.axis-label-x text {
+    font-size: 12px;
+    fill: #2c3e50; /* Dark blue-gray */
 }
 
-/* Responsive Design for Smaller Screens */
+/* X-Axis Labels */
+.axis-label-x text {
+    transform: translateY(5px);
+    text-anchor: middle;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-    #chart {
-        width: 100%; /* Make the chart responsive on smaller screens */
-    }
-
     h1, h2 {
-        font-size: 1px; /* Adjust headline sizes for smaller screens */
+        font-size: 20px;
+    }
+    #chart {
+        width: 100%;
     }
 }
