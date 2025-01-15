@@ -1,0 +1,38 @@
+/* General Body Styling */
+body {
+    font-family: Arial, sans-serif; /* Set font for the entire document */
+    margin: 20px; /* Add margin around the body */
+}
+
+/* Header Styling */
+h1 {
+    text-align: center; /* Center-align the title */
+    margin-bottom: 20px; /* Add space below the title */
+}
+
+/* Chart Container Styling */
+#chart {
+    display: block; /* Make the chart block-level to center it */
+    margin: 0 auto; /* Center the chart horizontally */
+    background-color: #f9f9f9; /* Set a light background color */
+    border: 1px solid #ccc; /* Add a border around the chart */
+}
+
+/* Bar Styling */
+.bar {
+    fill: steelblue; /* Default color for bars */
+}
+
+.bar:hover {
+    fill: orange; /* Highlight color on hover */
+}
+
+/* Axis Label Styling */
+.axis-label {
+    font-size: 10px; /* Font size for axis labels */
+}
+
+/* General Text Styling */
+text {
+    font-family: Arial, sans-serif; /* Use Arial for all text elements */
+}

@@ -1,6 +1,6 @@
 // Set dimensions and margins
-const margin = { top: 20, right: 30, bottom: 100, left: 50 };
-const width = 800 - margin.left - margin.right;
+const margin = { top: 20, right: 30, bottom: 150, left: 60 };
+const width = 1000 - margin.left - margin.right;
 const height = 500 - margin.top - margin.bottom;
 
 // Create SVG container
@@ -14,12 +14,15 @@ const svg = d3.select("#chart")
 d3.csv("boston_311_2023_by_reason.csv").then(data => {
     // Parse the data and convert counts to numbers
     data.forEach(d => {
-        d.Count = +d.Count;
+        d.Count = +d.Count; // Ensure 'Count' is treated as a number
     });
+
+    // Sort data by Count in descending order
+    data.sort((a, b) => b.Count - a.Count);
 
     // Create the x-axis scale
     const x = d3.scaleBand()
-        .domain(data.map(d => d.reason))
+        .domain(data.map(d => d.reason)) // Use the sorted data
         .range([0, width])
         .padding(0.2);
 
@@ -34,7 +37,7 @@ d3.csv("boston_311_2023_by_reason.csv").then(data => {
         .attr("transform", `translate(0,${height})`)
         .call(d3.axisBottom(x))
         .selectAll("text")
-        .attr("transform", "rotate(-45)")
+        .attr("transform", "rotate(-30)")  // Adjust angle for better readability
         .style("text-anchor", "end")
         .attr("class", "axis-label");
 
@@ -64,7 +67,7 @@ d3.csv("boston_311_2023_by_reason.csv").then(data => {
 
     // Add x-axis label
     svg.append("text")
-        .attr("y", height + margin.bottom - 10)
+        .attr("y", height + margin.bottom - 20)
         .attr("x", width / 2)
         .attr("text-anchor", "middle")
         .text("Reason for Call");
