@@ -2,6 +2,7 @@
 body {
     font-family: Arial, sans-serif; /* Set font for the entire document */
     margin: 20px; /* Add margin around the body */
+    background-color: #f4f4f4; /* Light gray background for contrast */
 }
 
 /* Header Styling */
@@ -24,13 +25,15 @@ h2 {
 #chart {
     display: block; /* Make the chart block-level to center it */
     margin: 0 auto; /* Center the chart horizontally */
-    background-color: #f9f9f9; /* Set a light background color */
+    background-color: white; /* Set a white background for the chart */
     border: 1px solid #ccc; /* Add a border around the chart */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for better presentation */
 }
 
 /* Bar Styling */
 .bar {
     fill: steelblue; /* Default color for bars */
+    transition: fill 0.3s ease; /* Smooth transition for hover effect */
 }
 
 .bar:hover {
@@ -39,10 +42,23 @@ h2 {
 
 /* Axis Label Styling */
 .axis-label {
-    font-size: 10px; /* Font size for axis labels */
+    font-size: 1px; /* Font size for axis labels */
+    fill: #333; /* Text color for axis labels */
+    text-indent: 30px ;
 }
 
 /* General Text Styling */
 text {
     font-family: Arial, sans-serif; /* Use Arial for all text elements */
+}
+
+/* Responsive Design for Smaller Screens */
+@media (max-width: 768px) {
+    #chart {
+        width: 100%; /* Make the chart responsive on smaller screens */
+    }
+
+    h1, h2 {
+        font-size: 1px; /* Adjust headline sizes for smaller screens */
+    }
 }
