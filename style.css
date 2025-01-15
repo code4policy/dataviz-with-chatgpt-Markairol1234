@@ -6,8 +6,18 @@ body {
 
 /* Header Styling */
 h1 {
-    text-align: center; /* Center-align the title */
-    margin-bottom: 20px; /* Add space below the title */
+    text-align: center; /* Center-align the main title */
+    margin-bottom: 10px; /* Add space below the main title */
+    font-size: 24px; /* Make the headline larger */
+    color: #333; /* Darker color for readability */
+}
+
+h2 {
+    text-align: center; /* Center-align the subheadline */
+    margin-top: 0; /* Remove additional margin above the subheadline */
+    margin-bottom: 20px; /* Add spacing below the subheadline */
+    font-size: 16px; /* Subheadline size */
+    color: #555; /* Lighter gray for subheadline */
 }
 
 /* Chart Container Styling */
