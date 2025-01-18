@@ -32,12 +32,12 @@ h2 {
 
 /* Bar Styling */
 .bar {
-    fill: #1abc9c; /* Vibrant teal for bars */
+    fill: #e67e22; /* Vibrant orange for bars */
     transition: fill 0.3s ease, transform 0.2s ease; /* Smooth hover effect */
 }
 
 .bar:hover {
-    fill: #16a085; /* Darker teal on hover */
+    fill: #3498db; /* Blue color on hover */
     transform: scaleX(1.05); /* Slight horizontal zoom */
 }
 
