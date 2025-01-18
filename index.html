@@ -6,11 +6,104 @@
     <title>Boston 311 Calls</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        #container {
+            display: flex;
+        }
+        #checkbox-container {
+            margin-right: 20px;
+        }
+        .checkbox-item {
+            margin-bottom: 5px;
+        }
+    </style>
 </head>
 <body>
     <h1>Top Reasons for 311 Calls in Boston (2023)</h1>
     <h2>An analysis of public service requests, ranked by frequency, highlighting the most common issues faced by residents.</h2>
-    <svg id="chart"></svg>
+    <div id="container">
+        <div id="checkbox-container">
+            <!-- Checkboxes will be dynamically populated here -->
+        </div>
+        <svg id="chart"></svg>
+    </div>
+    <button id="show-more">Show More</button>
+    <button id="reset-chart">Reset Chart</button>
+    <button id="download-chart">Download Chart</button>
+    <button id="toggle-chart">Toggle Chart Visibility</button>
+    <button id="select-all">Select All</button> <!-- New button to select all checkboxes -->
+    <label>Filter</label> <!-- New label below the select all button -->
     <script src="chart.js"></script>
+    <script>
+        d3.csv("boston_311_2023_by_reason.csv").then(data => {
+            const reasonCounts = d3.rollup(data, v => v.length, d => d.reason);
+            const sortedReasons = Array.from(reasonCounts.entries())
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 20) // Show only the top 20 reasons
+                .map(d => d[0]);
+            const checkboxContainer = d3.select("#checkbox-container");
+            // Remove the code that dynamically populates the checkboxes
+            // sortedReasons.forEach(reason => {
+            //     const checkboxItem = checkboxContainer.append("div").attr("class", "checkbox-item");
+            //     checkboxItem.append("input")
+            //         .attr("type", "checkbox")
+            //         .attr("id", reason)
+            //         .attr("name", reason)
+            //         .attr("value", reason)
+            //         .on("change", updateChart);
+            //     checkboxItem.append("label")
+            //         .attr("for", reason)
+            //         .text(reason);
+            // });
+
+            function updateChart() {
+                const selectedReasons = checkboxContainer.selectAll("input:checked").nodes().map(d => d.value);
+                const filteredData = data.filter(d => selectedReasons.includes(d.reason));
+                drawChart(filteredData);
+            }
+
+            function drawChart(filteredData) {
+                // Call the function from chart.js to draw the chart
+                drawBarChart(filteredData);
+            }
+
+            document.getElementById("reset-chart").addEventListener("click", () => {
+                checkboxContainer.selectAll("input").property("checked", false);
+                drawChart(data);
+            });
+
+            document.getElementById("download-chart").addEventListener("click", () => {
+                const svg = document.querySelector("#chart");
+                const svgData = new XMLSerializer().serializeToString(svg);
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
+                const img = new Image();
+                img.setAttribute("src", "data:image/svg+xml;base64," + btoa(svgData));
+                img.onload = function() {
+                    canvas.width = svg.clientWidth;
+                    canvas.height = svg.clientHeight;
+                    ctx.drawImage(img, 0, 0);
+                    const a = document.createElement("a");
+                    a.download = "chart.png";
+                    a.href = canvas.toDataURL("image/png");
+                    a.click();
+                };
+            });
+
+            document.getElementById("toggle-chart").addEventListener("click", () => {
+                const chart = document.getElementById("chart");
+                if (chart.style.display === "none") {
+                    chart.style.display = "block";
+                } else {
+                    chart.style.display = "none";
+                }
+            });
+
+            document.getElementById("select-all").addEventListener("click", () => {
+                checkboxContainer.selectAll("input").property("checked", true);
+                updateChart();
+            }); // New event listener for the select all button
+        });
+    </script>
 </body>
 </html>

@@ -49,6 +49,7 @@ d3.csv("boston_311_2023_by_reason.csv").then(data => {
     // =========================
     // Add the y-axis (reason categories)
     svg.append("g")
+        .attr("class", "y-axis")
         .call(d3.axisLeft(y))
         .selectAll("text")
         .attr("class", "axis-label")
@@ -74,7 +75,14 @@ d3.csv("boston_311_2023_by_reason.csv").then(data => {
         .attr("y", d => y(d.reason)) // Align bars based on the categorical axis
         .attr("x", 0) // Start bars at the origin (x=0)
         .attr("height", y.bandwidth()) // Set height based on band size
-        .attr("width", d => x(d.Count)); // Width corresponds to the Count
+        .attr("width", d => x(d.Count)) // Width corresponds to the Count
+        .attr("fill", "blue") // Initial color
+        .on("mouseover", function (event, d) {
+            d3.select(this).attr("fill", "orange"); // Change color on hover
+        })
+        .on("mouseout", function () {
+            d3.select(this).attr("fill", "blue"); // Revert color on mouseout
+        });
 
     // =========================
     // Add Labels
@@ -95,6 +103,188 @@ d3.csv("boston_311_2023_by_reason.csv").then(data => {
         .attr("text-anchor", "middle")
         .style("font-size", "14px") // Adjust label font size
         .text("Reason for Call");
+
+    // =========================
+    // Add Citation
+    // =========================
+    svg.append("text")
+        .attr("x", 0) // Align to the left
+        .attr("y", height + margin.bottom - 5) // Position just below the x-axis
+        .attr("text-anchor", "start") // Align text to the start
+        .style("font-size", "10px") // Smaller font size for citation
+        .style("fill", "#555") // Subtle gray color
+        .text("Source: City of Boston 311 Data (2023)");
+
+    // =========================
+    // Create Checkboxes for Filtering
+    // =========================
+    const checkboxContainer = d3.select("#checkbox-container")
+        .style("position", "fixed") // Change to fixed positioning
+        .style("left", "10px") // Position the container on the left side
+        .style("top", "50px"); // Adjust the top position as needed
+
+    // Add "Select All" button on top
+    checkboxContainer.append("div")
+        .attr("class", "checkbox-item")
+        .append("input")
+        .attr("type", "button")
+        .attr("id", "select-all")
+        .attr("value", "Select All");
+
+    // Use only the top 20 reasons for checkboxes
+    const top20Reasons = data.slice(0, 20);
+
+    top20Reasons.forEach(d => {
+        const checkboxItem = checkboxContainer.append("div")
+            .attr("class", "checkbox-item");
+
+        checkboxItem.append("input")
+            .attr("type", "checkbox")
+            .attr("value", d.reason)
+            .attr("checked", true)
+            .on("change", updateChart);
+
+        checkboxItem.append("label")
+            .text(d.reason)
+            .style("margin-left", "5px"); // Add some space between checkbox and text
+    });
+
+    // Function to update the chart based on selected checkboxes
+    function updateChart() {
+        const selectedReasons = checkboxContainer.selectAll("input:checked")
+            .nodes()
+            .map(d => d.value);
+
+        const filteredData = data.filter(d => selectedReasons.includes(d.reason));
+
+        // Update y scale domain
+        y.domain(filteredData.map(d => d.reason));
+
+        // Update bars
+        const bars = svg.selectAll(".bar")
+            .data(filteredData, d => d.reason);
+
+        bars.enter().append("rect")
+            .attr("class", "bar")
+            .attr("y", d => y(d.reason))
+            .attr("x", 0)
+            .attr("height", y.bandwidth())
+            .attr("width", d => x(d.Count))
+          .merge(bars)
+            .transition()
+            .duration(500)
+            .attr("y", d => y(d.reason))
+            .attr("height", y.bandwidth())
+            .attr("width", d => x(d.Count));
+
+        bars.exit().remove(); // Remove bars for unchecked reasons
+
+        // Update y-axis
+        svg.select(".y-axis")
+            .transition()
+            .duration(500)
+            .call(d3.axisLeft(y));
+    }
+
+    // =========================
+    // Add event listener to the existing button to show more data
+    d3.select('#show-more')
+        .on('click', () => {
+            // Load and process the full data again
+            d3.csv("boston_311_2023_by_reason.csv").then(fullData => {
+                // Parse the data and convert counts to numbers
+                fullData.forEach(d => {
+                    d.Count = +d.Count; // Ensure 'Count' is treated as a number
+                });
+
+                // Sort data by Count in descending order
+                fullData.sort((a, b) => b.Count - a.Count);
+
+                // Get the additional data (from 21st reason onwards)
+                const additionalData = fullData.slice(20);
+
+                // Append additional data to the existing data
+                data = data.concat(additionalData);
+
+                // Update y scale domain
+                y.domain(data.map(d => d.reason));
+
+                // Update x scale domain if necessary
+                x.domain([0, d3.max(data, d => d.Count)]).nice();
+
+                // Update bars
+                const bars = svg.selectAll(".bar")
+                    .data(data, d => d.reason);
+
+                bars.enter().append("rect")
+                    .attr("class", "bar")
+                    .attr("y", d => y(d.reason))
+                    .attr("x", 0)
+                    .attr("height", y.bandwidth())
+                    .attr("width", d => x(d.Count))
+                    .attr("fill", "blue")
+                    .on("mouseover", function (event, d) {
+                        d3.select(this).attr("fill", "orange"); // Change color on hover
+                    })
+                    .on("mouseout", function () {
+                        d3.select(this).attr("fill", "blue"); // Revert color on mouseout
+                    })
+                  .merge(bars)
+                    .transition()
+                    .duration(500)
+                    .attr("y", d => y(d.reason))
+                    .attr("height", y.bandwidth())
+                    .attr("width", d => x(d.Count));
+
+                bars.exit().remove(); // Remove bars for unchecked reasons
+
+                // Update y-axis
+                svg.select(".y-axis")
+                    .transition()
+                    .duration(500)
+                    .call(d3.axisLeft(y));
+
+                // Update x-axis
+                svg.select(".x-axis")
+                    .transition()
+                    .duration(500)
+                    .call(d3.axisBottom(x).ticks(10));
+            }).catch(error => {
+                console.error("Error loading or parsing data:", error);
+            });
+        });
+
+    // =========================
+    // Add event listener to the reset button to reset the chart
+    d3.select('#reset-chart')
+        .on('click', () => {
+            // Uncheck all checkboxes
+            checkboxContainer.selectAll("input")
+                .property("checked", false);
+
+            // Reset the chart to show all data
+            updateChart();
+        });
+
+    // =========================
+    // Add event listener to the toggle button to hide/show the chart
+    d3.select('#toggle-chart')
+        .on('click', () => {
+            const bars = svg.selectAll(".bar");
+            const isVisible = bars.style("display") !== "none";
+            bars.style("display", isVisible ? "none" : "block");
+        });
+
+    // Add event listener to the select all button to display the corresponding chart
+    d3.select('#select-all')
+        .on('click', () => {
+            // Check all checkboxes
+            checkboxContainer.selectAll("input")
+                .property("checked", true);
+
+            // Update the chart to show all data
+            updateChart();
+        });
 
 }).catch(error => {
     // =========================
@@ -138,13 +328,10 @@ function wrapText(text, width) {
         }
     });
 }
+
 // =========================
-// Add Citation
+// Function to Draw Bar Chart
 // =========================
-svg.append("text")
-    .attr("x", 0) // Align to the left
-    .attr("y", height + margin.bottom - 5) // Position just below the x-axis
-    .attr("text-anchor", "start") // Align text to the start
-    .style("font-size", "10px") // Smaller font size for citation
-    .style("fill", "#555") // Subtle gray color
-    .text("Source: City of Boston 311 Data (2023)");
+function drawBarChart(data) {
+    // ...existing code to draw the bar chart using the provided data...
+}
