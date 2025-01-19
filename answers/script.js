@@ -67,4 +67,64 @@ d3.csv('311_boston_data.csv').then(data => {
         .attr('text-anchor', 'left')
         .style('font-size', '12px')
         .text('Chart created by Aarushi Sahejpal. Data source: Boston.gov');
+
+    // Add button to show extended chart
+    d3.select('body')
+        .append('button')
+        .text('Show Extended Chart')
+        .on('click', () => {
+            // Remove existing chart
+            d3.select('#chart_311').selectAll('*').remove();
+
+            // Set up SVG container for extended chart
+            const extendedSvg = d3.select('#chart_311')
+                .append('svg')
+                .attr('width', svgWidth)
+                .attr('height', svgHeight)
+                .append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+
+            // Create scales for extended chart
+            const extendedYScale = d3.scaleBand()
+                .domain(data.map(d => d.reason))
+                .range([0, height])
+                .padding(0.2);
+
+            const extendedXScale = d3.scaleLinear()
+                .domain([0, d3.max(data, d => d.Count)])
+                .range([0, width]);
+
+            // Create bars for extended chart
+            extendedSvg.selectAll('rect')
+                .data(data)
+                .enter()
+                .append('rect')
+                .attr('x', 0)
+                .attr('y', d => extendedYScale(d.reason))
+                .attr('width', d => extendedXScale(d.Count))
+                .attr('height', extendedYScale.bandwidth())
+                .attr('fill', 'blue')
+                .on('mouseover', function (event, d) {
+                    d3.select(this).attr('fill', 'orange'); // Change color on hover
+                })
+                .on('mouseout', function () {
+                    d3.select(this).attr('fill', 'blue'); // Revert color on mouseout
+                });
+
+            // Add axes for extended chart
+            extendedSvg.append('g')
+                .call(d3.axisLeft(extendedYScale));
+
+            extendedSvg.append('g')
+                .attr('transform', `translate(0,${height})`)
+                .call(d3.axisBottom(extendedXScale));
+
+            // Add attribution line at the bottom for extended chart
+            extendedSvg.append('text')
+                .attr('x', width / 2)
+                .attr('y', height + margin.top + 20) // Adjust the y-coordinate for proper placement
+                .attr('text-anchor', 'left')
+                .style('font-size', '12px')
+                .text('Chart created by Aarushi Sahejpal. Data source: Boston.gov');
+        });
 });

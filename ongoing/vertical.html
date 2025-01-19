@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boston 311 Calls</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        #container {
+            display: block; /* Change to block for vertical layout */
+        }
+        #checkbox-container {
+            margin-bottom: 20px; /* Adjust margin for vertical layout */
+        }
+        .checkbox-item {
+            margin-bottom: 5px;
+        }
+        .reason-tag {
+            font-size: 10px; /* Adjust font size to prevent overlapping */
+            text-anchor: middle;
+        }
+    </style>
+</head>
+<body>
+    <h1>Top Reasons for 311 Calls in Boston (2023)</h1>
+    <h2>An analysis of public service requests, ranked by frequency, highlighting the most common issues faced by residents.</h2>
+    
+    <div id="container">
+        <svg id="chart"></svg>
+    </div>
+    
+    <script src="chart.js"></script>
+    <script>
+        d3.csv("boston_311_2023_by_reason.csv").then(data => {
+            const reasonCounts = d3.rollup(data, v => v.length, d => d.reason);
+            const sortedReasons = Array.from(reasonCounts.entries())
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10) // Show only the top 10 reasons
+                .map(d => d[0]);
+            
+            const checkboxContainer = d3.select("#checkbox-container");
+            // Remove the code that dynamically populates the checkboxes
+            // sortedReasons.forEach(reason => {
+            //     const checkboxItem = checkboxContainer.append("div").attr("class", "checkbox-item");
+            //     checkboxItem.append("input")
+            //         .attr("type", "checkbox")
+            //         .attr("id", reason)
+            //         .attr("name", reason)
+            //         .attr("value", reason)
+            //         .on("change", updateChart);
+            //     checkboxItem.append("label")
+            //         .attr("for", reason)
+            //         .text(reason);
+            // });
+
+            function updateChart() {
+                const selectedReasons = checkboxContainer.selectAll("input:checked").nodes().map(d => d.value);
+                const filteredData = data.filter(d => selectedReasons.includes(d.reason));
+                drawChart(filteredData);
+            }
+
+            function drawChart(filteredData) {
+                // Call the function from chart.js to draw the chart
+                drawBarChart(filteredData); // Removed "vertical" argument
+
+                // Add reason tags on top of each bar
+                const svg = d3.select("#chart");
+                svg.selectAll(".bar")
+                    .data(filteredData)
+                    .enter()
+                    .append("text")
+                    .attr("class", "reason-tag")
+                    .attr("x", d => xScale(d.reason) + xScale.bandwidth() / 2)
+                    .attr("y", d => yScale(d.count) - 5)
+                    .attr("dy", "-0.5em") // Adjust the position to be above the bar
+                    .text(d => d.reason);
+            }
+
+            document.getElementById("reset-chart").addEventListener("click", () => {
+                checkboxContainer.selectAll("input").property("checked", false);
+                drawChart(data);
+            });
+
+            document.getElementById("download-chart").addEventListener("click", () => {
+                const svg = document.querySelector("#chart");
+                const svgData = new XMLSerializer().serializeToString(svg);
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
+                const img = new Image();
+                img.setAttribute("src", "data:image/svg+xml;base64," + btoa(svgData));
+                img.onload = function() {
+                    canvas.width = svg.clientWidth;
+                    canvas.height = svg.clientHeight;
+                    ctx.drawImage(img, 0, 0);
+                    const a = document.createElement("a");
+                    a.download = "chart.png";
+                    a.href = canvas.toDataURL("image/png");
+                    a.click();
+                };
+            });
+
+            document.getElementById("toggle-chart").addEventListener("click", () => {
+                const chart = document.getElementById("chart");
+                if (chart.style.display === "none") {
+                    chart.style.display = "block";
+                } else {
+                    chart.style.display = "none";
+                }
+            });
+
+            document.getElementById("select-all").addEventListener("click", () => {
+                checkboxContainer.selectAll("input").property("checked", true);
+                updateChart();
+            }); // New event listener for the select all button
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+/* General Styling */
+body {
+    font-family: 'Arial', sans-serif; /* Clean font for the document */
+    margin: 20px;
+    background-color: #f7f9fc; /* Soft background for contrast */
+}
+
+/* Header Styling */
+h1 {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 26px; /* Slightly larger headline */
+    color: #2c3e50; /* Dark blue for readability */
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 18px; /* Subheadline size */
+    color: #34495e; /* Lighter shade of blue-gray */
+}
+
+/* Chart Container */
+#chart {
+    display: block;
+    margin: 0 auto;
+    background-color: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    padding: 20px;
+}
+
+/* Bar Styling */
+.bar {
+    fill: #e67e22; /* Vibrant orange for bars */
+    transition: fill 0.3s ease, transform 0.2s ease; /* Smooth hover effect */
+}
+
+.bar:hover {
+    fill: #3498db; /* Blue color on hover */
+    transform: scaleX(1.05); /* Slight horizontal zoom */
+}
+
+/* Reason Tag Styling */
+.reason-tag {
+    font-size: 10px;
+    fill: #2c3e50; /* Dark blue-gray */
+    text-anchor: middle;
+    transform: translateY(-10px); /* Position above the bar */
+}
+
+/* Axis Label Styling */
+.axis-label-y text {
+    font-size: 12px;
+    fill: #2c3e50; /* Dark blue-gray */
+}
+
+.axis-label-x text {
+    font-size: 12px;
+    fill: #2c3e50; /* Dark blue-gray */
+    transform: translateY(-10px); /* Position above the bar */
+}
+
+/* X-Axis Labels */
+.axis-label-x text {
+    transform: translateY(5px);
+    text-anchor: middle;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    h1, h2 {
+        font-size: 20px;
+    }
+    #chart {
+        width: 100%;
+    }
+}
