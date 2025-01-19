@@ -26,8 +26,8 @@ d3.csv("boston_311_2023_by_reason.csv").then(data => {
     // Sort data by Count in descending order
     data.sort((a, b) => b.Count - a.Count);
 
-    // Slice to get only the top 20 reasons
-    data = data.slice(0, 20);
+    // Slice to get only the top 10 reasons
+    data = data.slice(0, 10);
 
     // =========================
     // Create Scales
@@ -131,10 +131,10 @@ d3.csv("boston_311_2023_by_reason.csv").then(data => {
         .attr("id", "select-all")
         .attr("value", "Select All");
 
-    // Use only the top 20 reasons for checkboxes
-    const top20Reasons = data.slice(0, 20);
+    // Use only the top 10 reasons for checkboxes
+    const top10Reasons = data.slice(0, 10);
 
-    top20Reasons.forEach(d => {
+    top10Reasons.forEach(d => {
         const checkboxItem = checkboxContainer.append("div")
             .attr("class", "checkbox-item");
 
@@ -201,7 +201,7 @@ d3.csv("boston_311_2023_by_reason.csv").then(data => {
                 fullData.sort((a, b) => b.Count - a.Count);
 
                 // Get the additional data (from 21st reason onwards)
-                const additionalData = fullData.slice(20);
+                const additionalData = fullData.slice(10);
 
                 // Append additional data to the existing data
                 data = data.concat(additionalData);
