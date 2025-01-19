@@ -19,7 +19,7 @@
     </style>
 </head>
 <body>
-    <h1>Top Reasons for 311 Calls in Boston (2023)</h1>
+    <h1>Top 10 Reasons for 311 Calls in Boston (2023)</h1>
     <h2>An analysis of public service requests, ranked by frequency, highlighting the most common issues faced by residents.</h2>
     <div id="container">
         <div id="checkbox-container">
@@ -39,7 +39,7 @@
             const reasonCounts = d3.rollup(data, v => v.length, d => d.reason);
             const sortedReasons = Array.from(reasonCounts.entries())
                 .sort((a, b) => b[1] - a[1])
-                .slice(0, 20) // Show only the top 20 reasons
+                .slice(0, 10) // Show only the top 10 reasons
                 .map(d => d[0]);
             const checkboxContainer = d3.select("#checkbox-container");
             // Remove the code that dynamically populates the checkboxes
